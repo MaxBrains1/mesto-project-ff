@@ -1,12 +1,39 @@
 .profile__image {
+  position: relative;
   width: 120px;
   height: 120px;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
+  background-color:black ;
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  border: none;
+}
+
+.profile__image:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  background-blend-mode: darken;
+}
+
+.profile__edit-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  background-image: url("../../../images/Pencil-icon.svg"); 
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: translate(-50%, -50%);
+  opacity: 0; 
+  transition: opacity 0.3s ease; 
+}
+
+.profile__image:hover .profile__edit-icon {
+  opacity: 1;
 }
 
 @media screen and (max-width: 740px) {
