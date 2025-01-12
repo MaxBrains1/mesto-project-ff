@@ -5,10 +5,17 @@ const config = {
       'Content-Type': 'application/json',
     },
   };
+
+function getResponseData (res) {
+    if (!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`); 
+    }
+    return res.json();
+} 
   
   export const getUserInfo = () => {
     return fetch(`${config.baseUrl}/users/me`, { headers: config.headers })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+      .then((res) => getResponseData(res));
   };
   
   export const updateUserInfo = (name, about) => {
@@ -17,7 +24,7 @@ const config = {
       headers: config.headers,
       body: JSON.stringify({ name, about }),
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+     .then((res) => getResponseData(res));
   };
   
   export const updateUserAvatar = (avatar) => {
@@ -26,12 +33,12 @@ const config = {
       headers: config.headers,
       body: JSON.stringify({ avatar }),
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+      .then((res) => getResponseData(res));
   };
   
   export const getInitialCards = () => {
     return fetch(`${config.baseUrl}/cards`, { headers: config.headers })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+    .then((res) => getResponseData(res));
   };
   
   export const addCard = (name, link) => {
@@ -40,7 +47,7 @@ const config = {
       headers: config.headers,
       body: JSON.stringify({ name, link }),
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+    .then((res) => getResponseData(res));
   };
   
   export const deleteCard = (cardId) => {
@@ -48,7 +55,7 @@ const config = {
       method: 'DELETE',
       headers: config.headers,
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+    .then((res) => getResponseData(res));
   };
   
   export const likeCard = (cardId) => {
@@ -56,7 +63,7 @@ const config = {
       method: 'PUT',
       headers: config.headers,
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+    .then((res) => getResponseData(res));
   };
   
   export const dislikeCard = (cardId) => {
@@ -64,6 +71,6 @@ const config = {
       method: 'DELETE',
       headers: config.headers,
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)));
+    .then((res) => getResponseData(res));
   };
   

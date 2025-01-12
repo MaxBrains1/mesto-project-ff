@@ -1,11 +1,4 @@
-export const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-};
+
 
 const showInputError = (formElement, inputElement, errorMessage, config) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -22,9 +15,7 @@ const hideInputError = (formElement, inputElement, config) => {
 };
 
 const isValid = (formElement, inputElement, config) => {
-  if (inputElement.validity.valueMissing) {
-    inputElement.setCustomValidity("Вы пропустили это поле.");
-  } else if (inputElement.validity.patternMismatch) {
+  if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
     inputElement.setCustomValidity("");
@@ -76,7 +67,7 @@ const hasInvalidInput = (inputList) => {
 }); 
 }
 
-const toggleButtonState = (inputList, buttonElement, config) => {
+export const toggleButtonState = (inputList, buttonElement, config) => {
   if (hasInvalidInput(inputList)) {
         buttonElement.disabled = true;
     buttonElement.classList.add(config.inactiveButtonClass);

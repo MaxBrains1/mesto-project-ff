@@ -21,6 +21,10 @@ export function createCard(cardData, currentUserId, handleDeleteCard, handleLike
     deleteButton.addEventListener('click', () => handleDeleteCard(cardData._id, cardElement));
   }
 
+  cardElement.addEventListener('click', function() {
+    const cardTitle = cardElement.querySelector('.card__title').textContent;
+  });
+
   likeButton.addEventListener('click', () => handleLikeButton(cardData._id, likeButton, likeCounter));
 
   cardImage.addEventListener('click', () => handleImageClick(cardData.link, cardData.name));

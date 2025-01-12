@@ -1,11 +1,12 @@
 import '../pages/index.css';
 import { createCard, handleDeleteCard, handleLikeButton } from './card.js';
 import { closePopup, openPopup } from './modal.js';
-import {enableValidation, clearValidation, validationConfig} from './validation.js';
+import {enableValidation, clearValidation, toggleButtonState} from './validation.js';
 import { getUserInfo, getInitialCards, updateUserInfo, addCard, updateUserAvatar} from './api.js';
 
 const container = document.querySelector('.page');
-const addCardForm = container.querySelector('.popup__form');
+const addCardPopup = container.querySelector('.popup_type_new-card');
+const addCardForm = addCardPopup.querySelector('.popup__form');
 const editProfileForm = container.querySelector('.popup__form'); 
 const nameInput = container.querySelector('.popup__input_type_name');
 const jobInput = container.querySelector('.popup__input_type_description');
@@ -16,19 +17,31 @@ const cardList = container.querySelector('.places__list');
 const profileName = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 const popupEdit = container.querySelector('.popup_type_edit');
-const addCardPopup = container.querySelector('.popup_type_new-card');
 const popupImage = container.querySelector('.popup_type_image');
 const avatarPopup = container.querySelector('.popup_type_avatar-edit');
 const avatarForm = avatarPopup.querySelector('.popup__form');
 const avatarInput = avatarPopup.querySelector('.popup__input_type_avatar-url');
 const avatarButton = document.querySelector('.profile__image');
+const profileEditButton = document.querySelector('.profile__edit-button');
+const profileAddButton = document.querySelector('.profile__add-button');
 const popupImageElement = popupImage.querySelector('.popup__image');
 const popupCaptionElement = popupImage.querySelector('.popup__caption');
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
 Promise.all([getUserInfo(), getInitialCards()])
   .then(([userData, cards]) => {
     profileName.textContent = userData.name;
     profileDescription.textContent = userData.about;
+    avatarButton.style.backgroundImage = `url(${userData.avatar})`; 
+
 
     cards.forEach((cardData) => {
       const cardElement = createCard(cardData, userData._id, handleDeleteCard, handleLikeButton, openImagePopup);
@@ -124,49 +137,40 @@ function handleAvatarSubmit(evt) {
 
 avatarPopup.addEventListener('submit', handleAvatarSubmit);
 
-container.addEventListener('click', function (evt) {
-    const clickedElement = evt.target;
+profileEditButton.addEventListener('click', () => {
+  openPopup(popupEdit);
+  clearValidation(popupEdit, validationConfig);
+  nameInput.value = profileName.textContent; 
+  jobInput.value = profileDescription.textContent;
 
-    if (clickedElement.classList.contains('profile__edit-button')) {
-        openPopup(popupEdit);
-        clearValidation(popupEdit, validationConfig);
-        nameInput.value = profileName.textContent; 
-        jobInput.value = profileDescription.textContent;
-    } else if (clickedElement.classList.contains('profile__add-button')) {
-        openPopup(addCardPopup);
-        clearValidation(addCardPopup, validationConfig);
-        cardNameInput.value = "";
-        cardLinkInput.value = "";
-    } else if (clickedElement.classList.contains('profile__image')) {
-        openPopup(avatarPopup);
-        clearValidation(avatarPopup, validationConfig);
-        avatarInput.value = "";
-  }
+  const inputList = Array.from(popupEdit.querySelectorAll(validationConfig.inputSelector));
+  const submitButton = popupEdit.querySelector(validationConfig.submitButtonSelector);
+  toggleButtonState(inputList, submitButton, validationConfig);
+});
 
-    if (clickedElement.classList.contains('card__image')) {
-        const cardElement = clickedElement.closest('.card');
-        const imageSrc = clickedElement.src;
-        const imageAlt = clickedElement.alt;
-        const cardTitle = cardElement.querySelector('.card__title').textContent;
-    }
+profileAddButton.addEventListener('click', () => {
+  openPopup(addCardPopup);
+  clearValidation(addCardPopup, validationConfig);
+  cardNameInput.value = ""; 
+  cardLinkInput.value = "";
 
+  const inputList = Array.from(addCardPopup.querySelectorAll(validationConfig.inputSelector));
+  const submitButton = addCardPopup.querySelector(validationConfig.submitButtonSelector);
+  toggleButtonState(inputList, submitButton, validationConfig);
+});
+
+avatarButton.addEventListener('click', () => {
+  openPopup(avatarPopup);
+  clearValidation(avatarPopup, validationConfig);
+  avatarInput.value = ""; 
+
+  const inputList = Array.from(avatarPopup.querySelectorAll(validationConfig.inputSelector));
+  const submitButton = avatarPopup.querySelector(validationConfig.submitButtonSelector);
+  toggleButtonState(inputList, submitButton, validationConfig);
 });
 
 enableValidation(validationConfig);
 
-getUserInfo()
-  .then((userData) => {
-    profileName.textContent = userData.name;
-    profileDescription.textContent = userData.about;
-    avatarButton.style.backgroundImage = `url(${userData.avatar})`; // Задаём аватар
-  })
-  .catch((err) => console.error(`Ошибка загрузки данных пользователя: ${err}`));
 
-// updateUserAvatar(newAvatar)
-// .then((userData) => {
-//   console.log('Обновлённый пользователь:', userData); // Проверьте avatar
-//   avatarButton.style.backgroundImage = `url(${userData.avatar})`;
-//   closePopup(avatarPopup);
-//   avatarForm.reset();
-// })
-// .catch((err) => console.error(`Ошибка обновления аватара: ${err}`));
+
+
